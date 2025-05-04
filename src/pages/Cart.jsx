@@ -6,6 +6,7 @@ import {
   decreaseQty,
   deleteProduct,
 } from "../app/features/cart/cartSlice";
+import axios from 'axios';
 
 const Cart = () => {
   const { cartList } = useSelector((state) => state.cart);
@@ -19,6 +20,23 @@ const Cart = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handlePurchase = async () => {
+    try {
+      for (const item of cartList) {
+        const response = await axios.post("http://localhost:8080/produtos", {
+          id: parseInt(item.id), 
+          productName: item.productName,
+          price: item.price,
+        });
+        console.log("Produto salvo:", response.data);
+      }
+      alert("Compra realizada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao realizar compra:", error);
+      alert("Erro ao finalizar compra.");
+    }
+  };
 
   return (
     <section className="cart-items">
@@ -83,7 +101,7 @@ const Cart = () => {
               </div>
               <button
                 className="btn btn-primary w-100 mt-3"
-                onClick={() => alert("Compra realizada com sucesso!")}
+                onClick={handlePurchase}
                 disabled={cartList.length === 0}
               >
                 Comprar Produto
