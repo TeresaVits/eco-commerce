@@ -10,18 +10,16 @@ import {
 const Cart = () => {
   const { cartList } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-  // middlware to localStorage
+
   const totalPrice = cartList.reduce(
     (price, item) => price + item.qty * item.price,
     0
   );
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    // if(CartItem.length ===0) {
-    //   const storedCart = localStorage.getItem("cartItem");
-    //   setCartItem(JSON.parse(storedCart));
-    // }
   }, []);
+
   return (
     <section className="cart-items">
       <Container>
@@ -44,7 +42,7 @@ const Cart = () => {
                           <h3>{item.productName}</h3>
                           <h4>
                             ${item.price}.00 * {item.qty}
-                            <span>${productQty}.00</span>
+                            <span> ${productQty}.00</span>
                           </h4>
                         </Col>
                         <Col xs={12} sm={3} className="cartControl">
@@ -79,10 +77,17 @@ const Cart = () => {
           <Col md={4}>
             <div className="cart-total">
               <h2>Compras</h2>
-              <div className=" d_flex">
+              <div className="d_flex">
                 <h4>Preço Total :</h4>
                 <h3>R${totalPrice}.00</h3>
               </div>
+              <button
+                className="btn btn-primary w-100 mt-3"
+                onClick={() => alert("Compra realizada com sucesso!")}
+                disabled={cartList.length === 0}
+              >
+                Comprar Produto
+              </button>
             </div>
           </Col>
         </Row>
