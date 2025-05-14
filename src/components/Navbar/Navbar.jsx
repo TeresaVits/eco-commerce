@@ -76,7 +76,22 @@ const NavBar = () => {
           </Navbar.Toggle>
         </div>
         <Navbar.Collapse id="basic-navbar-nav">
+
+          
           <Nav className="justify-content-end flex-grow-1 pe-3">
+
+          <Nav.Item>
+            <Link
+              aria-label="Go to Login Page"
+              className="navbar-link"
+              to="/login"
+              onClick={() => setExpand(false)}
+            >
+              <span className="nav-link-label">Login</span>
+            </Link>
+          </Nav.Item>
+
+
             <Nav.Item>
               <Link
                 aria-label="Go to Home Page"
@@ -87,6 +102,8 @@ const NavBar = () => {
                 <span className="nav-link-label">Home</span>
               </Link>
             </Nav.Item>
+
+        
 
          
 
