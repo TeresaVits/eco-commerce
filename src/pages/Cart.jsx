@@ -25,14 +25,21 @@ const Cart = () => {
 
 
   const navigate = useNavigate();
-    const handlePurchase = () => {
+  const handlePurchase = () => {
     const fakeOrderId = `ORDER-${Math.floor(Math.random() * 100000)}`;
-
-    localStorage.setItem(
-      "lastOrder",
-      JSON.stringify({ id: fakeOrderId, products: cartList, total: totalPrice })
-    );
-
+    const savedOrders = JSON.parse(localStorage.getItem("orders")) || [];
+  
+    const newOrder = {
+      id: fakeOrderId,
+      products: cartList.map((item) => ({
+        ...item,
+        status: "Pendente" // você pode atualizar isso depois conforme o andamento
+      })),
+      total: totalPrice,
+    };
+  
+    localStorage.setItem("orders", JSON.stringify([...savedOrders, newOrder]));
+  
     alert("Compra feita com sucesso!");
     navigate("/pedido-status", { state: { orderId: fakeOrderId } });
   };

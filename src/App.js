@@ -6,6 +6,7 @@ import Footer from "./components/Footer/Footer";
 import Loader from "./components/Loader/Loader";
 import { ToastContainer } from "react-toastify";
 import OrderStatus from "./pages/OrderStatus";
+import MeusPedidos from "./pages/MeusPedidos";
 import "react-toastify/dist/ReactToastify.css";
 const Home = lazy(() => import("./pages/Home"));
 const Shop = lazy(() => import("./pages/Shop"));
@@ -34,6 +35,7 @@ function App() {
           <Route path="/shop/:id" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/pedido-status" element={<OrderStatus />} />
+          <Route path="/meus-pedidos" element={<MeusPedidos />} />
         </Routes>
         <Footer />
       </Router>

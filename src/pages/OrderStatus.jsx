@@ -11,7 +11,7 @@ const OrderStatus = () => {
 
     const checkStatus = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/pedidos/${orderId}/status`);
+        const response = await fetch(`http://localhost:3002/entregas/${orderId}`);
         const data = await response.json();
         setStatus(data.status);
       } catch (error) {
