@@ -7,6 +7,8 @@ import {
   deleteProduct,
 } from "../app/features/cart/cartSlice";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+
 
 const Cart = () => {
   const { cartList } = useSelector((state) => state.cart);
@@ -21,21 +23,18 @@ const Cart = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handlePurchase = async () => {
-    try {
-      for (const item of cartList) {
-        const response = await axios.post("http://localhost:8080/produtos", {
-          id: parseInt(item.id), 
-          productName: item.productName,
-          price: item.price,
-        });
-        console.log("Produto salvo:", response.data);
-      }
-      alert("Compra realizada com sucesso!");
-    } catch (error) {
-      console.error("Erro ao realizar compra:", error);
-      alert("Erro ao finalizar compra.");
-    }
+
+  const navigate = useNavigate();
+    const handlePurchase = () => {
+    const fakeOrderId = `ORDER-${Math.floor(Math.random() * 100000)}`;
+
+    localStorage.setItem(
+      "lastOrder",
+      JSON.stringify({ id: fakeOrderId, products: cartList, total: totalPrice })
+    );
+
+    alert("Compra feita com sucesso!");
+    navigate("/pedido-status", { state: { orderId: fakeOrderId } });
   };
 
   return (
