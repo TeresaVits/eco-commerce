@@ -5,10 +5,11 @@ import {
   addToCart,
   decreaseQty,
   deleteProduct,
+  clearCart, // importando a nova ação
 } from "../app/features/cart/cartSlice";
-import axios from 'axios';
+import API_BASES from "../apiConfig";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 
 const Cart = () => {
   const { cartList } = useSelector((state) => state.cart);
@@ -23,9 +24,9 @@ const Cart = () => {
     window.scrollTo(0, 0);
   }, []);
 
-
   const navigate = useNavigate();
-  const handlePurchase = () => {
+  
+  const handlePurchase = async () => {
     const fakeOrderId = `ORDER-${Math.floor(Math.random() * 100000)}`;
     const savedOrders = JSON.parse(localStorage.getItem("orders")) || [];
   
@@ -33,17 +34,27 @@ const Cart = () => {
       id: fakeOrderId,
       products: cartList.map((item) => ({
         ...item,
-        status: "Pendente" // você pode atualizar isso depois conforme o andamento
+        status: "Pendente"
       })),
       total: totalPrice,
     };
   
-    localStorage.setItem("orders", JSON.stringify([...savedOrders, newOrder]));
+    try {
+      // Enviando dados para o back-end (pagamento)
+      await axios.post(`${API_BASES.pagamento}/processar`, newOrder);
   
-    alert("Compra feita com sucesso!");
-    navigate("/pedido-status", { state: { orderId: fakeOrderId } });
+      localStorage.setItem("orders", JSON.stringify([...savedOrders, newOrder]));
+      alert("Compra feita com sucesso!");
+  
+      dispatch(clearCart());
+  
+      navigate("/pedido-status", { state: { orderId: fakeOrderId } });
+  
+    } catch (error) {
+      console.error("Erro ao processar pagamento:", error);
+      alert("Erro ao processar pagamento.");
+    }
   };
-
   return (
     <section className="cart-items">
       <Container>

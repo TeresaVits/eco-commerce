@@ -20,11 +20,7 @@ export const cartSlice = createSlice({
         (item) => item.id === productToAdd.id
       );
       if (productExit) {
-        state.cartList = state.cartList.map((item) =>
-          item.id === action.payload.product.id
-            ? { ...productExit, qty: productExit.qty + action.payload.num }
-            : item
-        );
+        return;
       } else {
         state.cartList.push({ ...productToAdd, qty: quantity });
       }
@@ -52,6 +48,9 @@ export const cartSlice = createSlice({
         (item) => item.id !== productToDelete.id
       );
     },
+    clearCart: (state) => {
+      state.cartList = [];
+    },
   },
 });
 
@@ -64,6 +63,6 @@ export const cartMiddleware = (store) => (next) => (action) => {
   return result;
 };
 
-export const { addToCart, decreaseQty, deleteProduct } = cartSlice.actions;
+export const { addToCart, decreaseQty, deleteProduct, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

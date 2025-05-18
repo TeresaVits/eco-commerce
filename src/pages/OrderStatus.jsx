@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import API_BASES from "../apiConfig";
 
 const OrderStatus = () => {
   const location = useLocation();
@@ -11,7 +12,7 @@ const OrderStatus = () => {
 
     const checkStatus = async () => {
       try {
-        const response = await fetch(`http://localhost:3002/entregas/${orderId}`);
+        const response = await fetch(`${API_BASES.rastreamento}/${orderId}`);
         const data = await response.json();
         setStatus(data.status);
       } catch (error) {

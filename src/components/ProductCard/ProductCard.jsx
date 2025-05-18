@@ -2,19 +2,29 @@ import { Col } from "react-bootstrap";
 import "./product-card.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../app/features/cart/cartSlice";
 
 const ProductCard = ({ title, productItem }) => {
   const dispatch = useDispatch();
   const router = useNavigate();
+  const cartList = useSelector((state) => state.cart.cartList);
+
   const handelClick = () => {
     router(`/shop/${productItem.id}`);
   };
+
   const handelAdd = (productItem) => {
-    dispatch(addToCart({ product: productItem, num: 1 }));
-    toast.success("Product has been added to cart!");
+    const productInCart = cartList.find((item) => item.id === productItem.id);
+
+    if (productInCart) {
+      toast.error("Product is already in the cart!");
+    } else {
+      dispatch(addToCart({ product: productItem, num: 1 }));
+      toast.success("Product has been added to cart!");
+    }
   };
+
   return (
     <Col md={3} sm={5} xs={10} className="product mtop">
       {title === "Big Discount" ? (
@@ -28,7 +38,6 @@ const ProductCard = ({ title, productItem }) => {
       />
       <div className="product-details">
         <h3 onClick={() => handelClick()}>{productItem.productName}</h3>
-       
         <div className="price">
           <h4>${productItem.price}</h4>
           <button
