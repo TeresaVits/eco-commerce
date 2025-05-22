@@ -1,34 +1,43 @@
-import { Col, Container, Row } from "react-bootstrap";
-import FilterSelect from "../components/FilterSelect";
-import { Fragment, useState } from "react";
-import { products } from "../utils/products";
-import ShopList from "../components/ShopList";
-import Banner from "../components/Banner/Banner";
-import useWindowScrollToTop from "../hooks/useWindowScrollToTop";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import { listarProdutos } from "../service/produtoService"; // pra buscar produto no backend
 
 const Shop = () => {
-  const [filterList, setFilterList] = useState(
-    products.filter((item) => item.category === "sofa")
-  );
-  useWindowScrollToTop();
+  const { id } = useParams(); // pega o id da URL
+  const [produto, setProduto] = useState(null);
+
+  useEffect(() => {
+    // Buscar todos produtos e filtrar pelo id
+    listarProdutos()
+      .then((produtos) => {
+        const produtoSelecionado = produtos.find(p => p.id === Number(id));
+        setProduto(produtoSelecionado);
+      })
+      .catch((err) => console.error("Erro ao buscar produto:", err));
+  }, [id]);
+
+  if (!produto) {
+    return <p>Carregando produto...</p>;
+  }
 
   return (
-    <Fragment>
-      <Banner title="product" />
-      <section className="filter-bar">
-        <Container className="filter-bar-contianer">
-          <Row className="justify-content-center">
-            <Col md={4}>
-              <FilterSelect setFilterList={setFilterList} />
-            </Col>
-          
-          </Row>
-        </Container>
-        <Container>
-          <ShopList productItems={filterList} />
-        </Container>
-      </section>
-    </Fragment>
+    <Container className="mt-4">
+      <Row>
+        <Col md={6}>
+          <img
+            src={produto.imgUrl}
+            alt={produto.nome}
+            style={{ width: "100%", objectFit: "cover" }}
+          />
+        </Col>
+        <Col md={6}>
+          <h1>{produto.nome}</h1>
+          <h3>Preço: R$ {produto.preco}</h3>
+          {/* Aqui você pode adicionar mais detalhes do produto */}
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

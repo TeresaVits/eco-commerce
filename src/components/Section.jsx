@@ -1,11 +1,11 @@
-import { Container, Row } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import ProductCard from "./ProductCard/ProductCard";
 
 const Section = ({ title, bgColor, productItems }) => {
   return (
-    <section style={{ background: bgColor }}>
+    <section style={{ background: bgColor, padding: "2rem 0" }}>
       <Container>
-        <div className="heading">
+        <div className="heading text-center mb-4">
           <h1>{title}</h1>
         </div>
         <Row className="justify-content-center">

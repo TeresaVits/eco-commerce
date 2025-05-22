@@ -5,7 +5,7 @@ import {
   addToCart,
   decreaseQty,
   deleteProduct,
-  clearCart, // importando a nova ação
+  clearCart,
 } from "../app/features/cart/cartSlice";
 import API_BASES from "../apiConfig";
 import axios from "axios";
@@ -16,7 +16,7 @@ const Cart = () => {
   const dispatch = useDispatch();
 
   const totalPrice = cartList.reduce(
-    (price, item) => price + item.qty * item.price,
+    (price, item) => price + item.qty * item.preco,
     0
   );
 
@@ -25,8 +25,8 @@ const Cart = () => {
   }, []);
 
   const navigate = useNavigate();
-  
-  const handlePurchase = async () => {
+
+  const handlePurchase = () => {
     const fakeOrderId = `ORDER-${Math.floor(Math.random() * 100000)}`;
     const savedOrders = JSON.parse(localStorage.getItem("orders")) || [];
   
@@ -34,50 +34,40 @@ const Cart = () => {
       id: fakeOrderId,
       products: cartList.map((item) => ({
         ...item,
-        status: "Pendente"
+        status: "Pendente",
       })),
       total: totalPrice,
     };
-  
-    try {
-      // Enviando dados para o back-end (pagamento)
-      await axios.post(`${API_BASES.pagamento}/processar`, newOrder);
-  
       localStorage.setItem("orders", JSON.stringify([...savedOrders, newOrder]));
-      alert("Compra feita com sucesso!");
+    alert("Compra registrada com sucesso!");
   
-      dispatch(clearCart());
-  
-      navigate("/pedido-status", { state: { orderId: fakeOrderId } });
-  
-    } catch (error) {
-      console.error("Erro ao processar pagamento:", error);
-      alert("Erro ao processar pagamento.");
-    }
+    dispatch(clearCart());
+    navigate("/pedido-status", { state: { orderId: fakeOrderId } });
   };
+  
   return (
     <section className="cart-items">
       <Container>
         <Row className="justify-content-center">
           <Col md={8}>
             {cartList.length === 0 && (
-              <h1 className="no-items product">No Items are add in Cart</h1>
+              <h1 className="no-items product">Nenhum item adicionado ao carrinho</h1>
             )}
             {cartList.map((item) => {
-              const productQty = item.price * item.qty;
+              const productQty = item.preco * item.qty;
               return (
                 <div className="cart-list" key={item.id}>
                   <Row>
                     <Col className="image-holder" sm={4} md={3}>
-                      <img src={item.imgUrl} alt="" />
+                      <img src={item.imgUrl || "/default-img.png"} alt="" />
                     </Col>
                     <Col sm={8} md={9}>
                       <Row className="cart-content justify-content-center">
                         <Col xs={12} sm={9} className="cart-details">
-                          <h3>{item.productName}</h3>
+                          <h3>{item.nome}</h3>
                           <h4>
-                            ${item.price}.00 * {item.qty}
-                            <span> ${productQty}.00</span>
+                            R${item.preco}.00 × {item.qty}
+                            <span> = R${productQty}.00</span>
                           </h4>
                         </Col>
                         <Col xs={12} sm={3} className="cartControl">
@@ -109,11 +99,12 @@ const Cart = () => {
               );
             })}
           </Col>
+
           <Col md={4}>
             <div className="cart-total">
-              <h2>Compras</h2>
+              <h2>Resumo da Compra</h2>
               <div className="d_flex">
-                <h4>Preço Total :</h4>
+                <h4>Preço Total:</h4>
                 <h3>R${totalPrice}.00</h3>
               </div>
               <button
